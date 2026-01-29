@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Senior Phone Moderno</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+
+    <div class="phone-frame">
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <span id="clock">12:00</span>
+            <div class="right-icons" style="display: flex; align-items: center; gap: 10px;">
+                <img src="assets/innovar_logo.png?v=1" alt="Innovar"
+                    style="height: 40px; filter: brightness(0); opacity: 0.8;">
+                <span>📶 5G</span>
+                <span>🔋 100%</span>
+            </div>
+        </div>
+
+        <!-- APP SCREENS -->
+        <main id="app-container">
+
+            <!-- HOME SCREEN -->
+            <section id="home-screen" class="screen active">
+                <h1 class="screen-title" style="text-align: center; margin-top: 20px;">Hola, Agustín</h1>
+                <div class="app-grid">
+                    <button class="app-icon" onclick="showScreen('phone-screen')" style="color: #007aff;">
+                        <span class="icon">📞</span>
+                        <span class="label">Teléfono</span>
+                    </button>
+                    <button class="app-icon" onclick="showScreen('whatsapp-screen')" style="color: #25d366;">
+                        <img src="assets/whatsapp.png" alt="WhatsApp" class="icon-img">
+                        <span class="label">WhatsApp</span>
+                    </button>
+                    <button class="app-icon" onclick="showScreen('renemey-screen')" style="color: #8e44ad;">
+                        <img src="assets/rene_mey.jpg" alt="René Mey" class="icon-img rounded-icon">
+                        <span class="label">René Mey</span>
+                    </button>
+                    <button class="app-icon" onclick="openInnovar()" style="background-color: #004aad; color: white;">
+                        <img src="assets/innovar_logo.png?v=1" alt="Innovar" class="icon-img"
+                            style="object-fit: contain;">
+                        <span class="label" style="color: white;">Innovar</span>
+                    </button>
+                    <button class="app-icon" onclick="showScreen('contacts-screen')" style="color: #ff9500;">
+                        <span class="icon">👥</span>
+                        <span class="label">Contactos</span>
+                    </button>
+                    <button class="app-icon" onclick="showScreen('meds-screen')" style="color: #ff3b30;">
+                        <span class="icon">💊</span>
+                        <span class="label">Pastillero</span>
+                    </button>
+                    <button class="app-icon" onclick="showScreen('sos-screen')" style="color: #ff3b30;">
+                        <span class="icon">🆘</span>
+                        <span class="label">Auxilio</span>
+                    </button>
+                    <button class="app-icon" onclick="showScreen('games-hub-screen')"
+                        style="color: #9b59b6; grid-column: span 2; width: 100%;">
+                        <img src="assets/games_icon.png" alt="Juegos" class="icon-img"
+                            style="object-fit: contain; width: 60px; height: 60px;"
+                            onerror="this.src='';this.nextElementSibling.innerHTML='🎮';">
+                        <!-- Fallback icon if image fails loading -->
+                        <span class="label" style="font-size: 20px;">Juegos</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- PHONE DIALER SCREEN -->
+            <section id="phone-screen" class="screen hidden">
+                <div class="dialer-display">
+                    <span id="phone-number-display"></span>
+                    <button class="backspace-btn" onclick="deleteDigit()">⌫</button>
+                </div>
+                <div class="keypad">
+                    <button class="digit" onclick="dialDigit('1')">1</button>
+                    <button class="digit" onclick="dialDigit('2')">2</button>
+                    <button class="digit" onclick="dialDigit('3')">3</button>
+                    <button class="digit" onclick="dialDigit('4')">4</button>
+                    <button class="digit" onclick="dialDigit('5')">5</button>
+                    <button class="digit" onclick="dialDigit('6')">6</button>
+                    <button class="digit" onclick="dialDigit('7')">7</button>
+                    <button class="digit" onclick="dialDigit('8')">8</button>
+                    <button class="digit" onclick="dialDigit('9')">9</button>
+                    <button class="digit" onclick="dialDigit('*')">*</button>
+                    <button class="digit" onclick="dialDigit('0')">0</button>
+                    <button class="digit" onclick="dialDigit('#')">#</button>
+                </div>
+                <button class="call-btn" onclick="makeCall()">
+                    <span style="margin-right: 10px;">📞</span> LLAMAR
+                </button>
+                <button class="back-btn-float" onclick="goHome()">Inicio</button>
+            </section>
+
+            <!-- WHATSAPP SCREEN -->
+            <section id="whatsapp-screen" class="screen hidden">
+                <div class="whatsapp-header">
+                    <img src="assets/whatsapp.png" style="width: 30px; height: 30px; filter: brightness(0) invert(1);">
+                    <h2>WhatsApp</h2>
+                </div>
+                <div class="chat-list">
+                    <!-- Profesora Estefanía Chat -->
+                    <div class="chat-item" onclick="openChat('Profesora Estefanía', '1158247829')">
+                        <div class="chat-avatar" style="background: #e91e63; color: white;">👩‍🏫</div>
+                        <div class="chat-info">
+                            <span class="chat-name">Profesora Estefanía</span>
+                            <span class="chat-preview">Traigan sus dudas anotadas.</span>
+                        </div>
+                        <span class="chat-time" style="color: #09d261; font-weight: bold;">09:00</span>
+                    </div>
+
+                    <div class="chat-item" onclick="openChat('Agustín Pizzichini', '1131440139')">
+                        <div class="chat-avatar" style="background: #007aff; color: white;">👨‍💻</div>
+                        <div class="chat-info">
+                            <span class="chat-name">Agustín Pizzichini</span>
+                            <span class="chat-preview">No, solo probaba. ¡Gracias!</span>
+                        </div>
+                        <span class="chat-time" style="color: #999; font-size: 14px;">11:20</span>
+                    </div>
+
+                    <div class="chat-item" onclick="openChat('Grupo Familia', null)">
+                        <div class="chat-avatar">👨‍👩‍👧‍👦</div>
+                        <div class="chat-info">
+                            <span class="chat-name">Grupo Familia</span>
+                            <span class="chat-preview">Carlos: Nos vemos el domingo. Asado!</span>
+                        </div>
+                        <span class="chat-time" style="color: #999; font-size: 14px;">Ayer</span>
+                    </div>
+                </div>
+                <button class="back-btn-float" onclick="goHome()">Inicio</button>
+            </section>
+
+            <!-- WHATSAPP CHAT VIEW -->
+            <section id="whatsapp-chat" class="screen hidden"
+                style="background-color: #e5ddd5; flex-direction: column;">
+                <div class="whatsapp-header" style="padding: 15px; border-radius: 0; justify-content: space-between;">
+                    <div style="display:flex; align-items:center;">
+                        <button onclick="showScreen('whatsapp-screen')"
+                            style="background:none; border:none; color:white; font-size: 24px; margin-right: 10px;">⬅</button>
+                        <div class="chat-avatar" style="width: 40px; height: 40px; font-size: 20px;">👤</div>
+                        <h3 id="chat-title-name" style="margin-left: 10px; font-size: 18px;">Contacto</h3>
+                    </div>
+                    <!-- Real WhatsApp Button (Hidden by default) -->
+                    <button id="whatsapp-real-btn"
+                        style="background: white; color: #25d366; border: none; padding: 5px 10px; border-radius: 15px; font-weight: bold; font-size: 12px; display: none;">
+                        ABRIR APP REAL ↗
+                    </button>
+                </div>
+                <div id="chat-messages"
+                    style="flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column;">
+                    <!-- Messages injected via JS -->
+                </div>
+                <div class="chat-input-area"
+                    style="padding: 10px; background: white; display: flex; align-items: center;">
+                    <div style="flex:1; background: #f0f0f0; padding: 10px; border-radius: 20px; color: #999;">Escribe
+                        un mensaje...</div>
+                    <button
+                        style="background:var(--whatsapp-color); color:white; border:none; border-radius: 50%; width: 40px; height: 40px; margin-left: 10px;">➤</button>
+                </div>
+            </section>
+
+            <!-- RENÉ MEY APP -->
+            <section id="renemey-screen" class="screen hidden">
+                <div class="rene-hero" style="position: relative; overflow: hidden; padding-bottom: 40px;">
+                    <img src="assets/rene_mey.jpg"
+                        style="width: 120px; height: 120px; border-radius: 50%; border: 4px solid white; margin-bottom: 15px; object-fit: cover; box-shadow: 0 5px 15px rgba(0,0,0,0.3);">
+                    <h1 class="rene-title">René Mey</h1>
+                    <p style="font-size: 18px; opacity: 0.9; font-style: italic;">"La inteligencia del corazón"</p>
+                </div>
+
+                <div style="padding: 15px; flex: 1; overflow-y: auto;">
+                    <div class="therapy-card">
+                        <h3>✨ Regeneración Celular</h3>
+                        <p><strong>¿Qué es?</strong><br>Una técnica que estimula el sistema nervioso a través de
+                            <em>suaves toques en la columna vertebral</em>.
+                        </p>
+                        <p style="margin-top: 10px;"><strong>Beneficios:</strong><br>• Promueve la salud física y
+                            emocional.<br>• Ayuda a la autosanación.<br>• Genera una intención de Amor puro.</p>
+                        <button onclick="alert('Abriendo video explicativo...')"
+                            style="margin-top: 15px; width: 100%; padding: 12px; background: var(--renemey-color); color: white; border: none; border-radius: 12px; font-weight: bold;">Ver
+                            Video Técnica</button>
+                    </div>
+
+                    <div class="therapy-card" style="border-left-color: #e67e22;">
+                        <h3>❤️ Medicina Emocional</h3>
+                        <p>Busca sanar las emociones profundas que causan enfermedades. Se basa en la paz y la compasión
+                            hacia uno mismo y los demás.</p>
+                    </div>
+
+                    <div class="therapy-card" style="border-left-color: #2ecc71;">
+                        <img src="assets/rene_mey.jpg"
+                            style="width: 100%; height: 150px; object-fit: cover; border-radius: 8px; margin-bottom: 10px; opacity: 0.8;">
+                        <h3>🤝 Encuentra Voluntarios</h3>
+                        <p>Hay miles de voluntarios capacitados listos para ayudar de forma gratuita.</p>
+                        <button onclick="alert('Buscando voluntarios cercanos...')"
+                            style="margin-top: 10px; width: 100%; padding: 12px; background: #2ecc71; color: white; border: none; border-radius: 12px; font-weight: bold;">Buscar
+                            Ayuda Cercana</button>
+                    </div>
+                </div>
+                <button class="back-btn-float" onclick="goHome()">Inicio</button>
+            </section>
+
+            <!-- INNOVAR UNTREF APP -->
+            <section id="innovar-screen" class="screen hidden"
+                style="background: white; display: flex; flex-direction: column;">
+                <div
+                    style="background: #004aad; color: white; padding: 15px; display: flex; align-items: center; justify-content: space-between;">
+                    <span style="font-weight: bold; font-size: 20px;">Innovar UNTREF</span>
+                    <button onclick="goHome()"
+                        style="background: rgba(255,255,255,0.2); border: none; color: white; padding: 5px 15px; border-radius: 15px;">Cerrar</button>
+                </div>
+                <!-- Iframe to the course -->
+                <iframe id="innovar-frame" src="https://www.innovaruntref.com.ar/courses/introduccion_informatica_ulp/"
+                    style="flex: 1; border: none; width: 100%; height: 100%;"></iframe>
+            </section>
+
+            <!-- GAMES HUB SCREEN -->
+            <section id="games-hub-screen" class="screen hidden">
+                <h1 class="screen-title" style="color: #9b59b6;">Sala de Juegos</h1>
+                <div class="app-grid">
+                    <button class="app-icon" onclick="startGame('2048')" style="color: #f39c12;">
+                        <span class="icon">🔢</span>
+                        <span class="label">2048</span>
+                    </button>
+                    <button class="app-icon" onclick="startGame('wordsearch')" style="color: #3498db;">
+                        <span class="icon">🔠</span>
+                        <span class="label">Sopa de Letras</span>
+                    </button>
+                    <button class="app-icon" onclick="startGame('memory')" style="color: #e74c3c;">
+                        <span class="icon">🧠</span>
+                        <span class="label">Memoria</span>
+                    </button>
+                </div>
+                <button class="back-btn-float" onclick="goHome()">Inicio</button>
+            </section>
+
+            <!-- GAMES PLAY SCREEN -->
+            <section id="games-play-screen" class="screen hidden"
+                style="background: white; display: flex; flex-direction: column;">
+                <div
+                    style="background: #9b59b6; color: white; padding: 10px; display: flex; align-items: center; justify-content: space-between;">
+                    <span style="font-weight: bold; font-size: 18px;">Jugando...</span>
+                    <button onclick="showScreen('games-hub-screen')"
+                        style="background: rgba(255,255,255,0.2); border: none; color: white; padding: 5px 15px; border-radius: 15px;">Salir</button>
+                </div>
+                <div id="game-container-content" style="flex:1; overflow: hidden; position: relative;">
+                    <!-- Game content loaded here -->
+                </div>
+            </section>
+
+            <!-- SOS SCREEN -->
+            <section id="sos-screen" class="screen hidden" style="justify-content: center; align-items: center;">
+                <h2 style="color: var(--danger-color); font-size: 36px; margin-bottom: 20px;">¿EMERGENCIA?</h2>
+                <button class="sos-btn-large" onclick="triggerSOS()">
+                    LLAMAR<br>911
+                </button>
+                <div
+                    style="background: white; padding: 15px; border-radius: 10px; margin-top: 20px; text-align: left; width: 80%; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+                    <p style="font-weight: bold; color: #333;">Avisando a:</p>
+                    <ul style="list-style: none; padding: 0; margin-top: 5px; color: #666;">
+                        <li>• Agustín Pizzichini</li>
+                        <li>• Estefanía Morreale</li>
+                    </ul>
+                </div>
+                <button class="back-btn-float" onclick="goHome()">Cancelar</button>
+            </section>
+
+            <!-- CONTACTS SCREEN (Updated) -->
+            <section id="contacts-screen" class="screen hidden">
+                <h1 class="screen-title">Contactos</h1>
+                <div class="chat-list">
+                    <div class="chat-item">
+                        <div class="chat-avatar" style="background: #007aff; color: white;">A</div>
+                        <div class="chat-info">
+                            <span class="chat-name">Agustín Pizzichini</span>
+                            <span class="chat-preview">11 3144-0139</span>
+                        </div>
+                        <button onclick="callContact('Agustín Pizzichini', '1131440139')"
+                            style="padding: 10px; background: #007aff; color: white; border: none; border-radius: 50%;">📞</button>
+                    </div>
+
+                    <div class="chat-item">
+                        <div class="chat-avatar" style="background: #e91e63; color: white;">E</div>
+                        <div class="chat-info">
+                            <span class="chat-name">Estefanía Morreale</span>
+                            <span class="chat-preview">11 5824-7829</span>
+                        </div>
+                        <button onclick="callContact('Estefanía Morreale', '1158247829')"
+                            style="padding: 10px; background: #007aff; color: white; border: none; border-radius: 50%;">📞</button>
+                    </div>
+
+                    <div class="chat-item">
+                        <div class="chat-avatar" style="background: #ffcc00;">🚕</div>
+                        <div class="chat-info">
+                            <span class="chat-name">Remís</span>
+                            <span class="chat-preview">11 4444-2222</span>
+                        </div>
+                        <button onclick="callContact('Remís', '1144442222')"
+                            style="padding: 10px; background: #007aff; color: white; border: none; border-radius: 50%;">📞</button>
+                    </div>
+                </div>
+                <button class="back-btn-float" onclick="goHome()">Inicio</button>
+            </section>
+
+            <!-- PASTILLERO VIRTUAL APP -->
+            <section id="meds-screen" class="screen hidden">
+                <h1 class="screen-title" style="color: #ff3b30;">Pastillero</h1>
+                <div class="meds-date" style="text-align: center; color: #666; margin-bottom: 20px; font-weight: bold;">
+                    Hoy, <span id="current-date-string">Jueves 29</span>
+                </div>
+
+                <div id="meds-list-container">
+                    <!-- Injected by JS -->
+                </div>
+
+                <!-- Hidden Controls for Demo -->
+                <div style="position: absolute; bottom: 80px; left: 0; width: 100%; text-align: center; opacity: 0.5;">
+                    <button onclick="debugForceAlarm()" style="font-size: 10px; padding: 5px;">[DEBUG: Probar
+                        Alarma]</button>
+                    <button onclick="resetMedsData()" style="font-size: 10px; padding: 5px;">[DEBUG: Resetear
+                        Día]</button>
+                </div>
+
+                <button class="back-btn-float" onclick="goHome()">Inicio</button>
+            </section>
+        </main>
+
+        <div class="nav-bar-bottom">
+            <div class="home-indicator"></div>
+        </div>
+    </div>
+
+    <!-- ALARM OVERLAY (Global) -->
+    <div id="alarm-overlay" class="hidden">
+        <div class="alarm-content">
+            <h1>⏰<br>HORA DE TU<br>MEDICAMENTO</h1>
+            <h2 id="alarm-med-name" style="margin: 20px 0; color: #333;">Pastilla de la Presión</h2>
+            <p style="font-size: 18px; margin-bottom: 30px;">Son las <span id="alarm-time-display">14:00</span></p>
+
+            <button class="take-med-btn" onclick="confirmAlarmTake()">
+                ✅ YA LA TOMÉ
+            </button>
+            <button class="snooze-btn" onclick="snoozeAlarm()">
+                💤 5 minutos más
+            </button>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
