@@ -236,6 +236,7 @@ function startGame(gameName) {
     if (gameName === '2048') init2048(container);
     if (gameName === 'wordsearch') initWordSearch(container);
     if (gameName === 'memory') initLogicMemory(container);
+    if (gameName === 'scrabble') initScrabble(container);
 }
 
 // --- 2048 GAME ---
@@ -731,3 +732,104 @@ function openAIUrl(url) {
 document.addEventListener('DOMContentLoaded', () => {
     // Other DOM loaded events here if necessary
 });
+
+// --- SCRABBLE ARGENTINO ---
+const scrabbleScores = {
+    'A':1, 'B':3, 'C':3, 'D':2, 'E':1, 'F':4, 'G':2, 'H':4, 'I':1, 'J':8, 'K':5, 'L':1, 'M':3, 
+    'N':1, '�':8, 'O':1, 'P':3, 'Q':5, 'R':1, 'S':1, 'T':1, 'U':1, 'V':4, 'W':8, 'X':8, 'Y':4, 'Z':10
+};
+
+const argentineWords = [
+    "MATE", "ASADO", "TRUCO", "PAMPA", "TANGO", "CUMBIA", "TERMO", "BARRIO", "CRIOLLO"
+];
+
+let scrabbleTargetWord = "";
+let scrabbleHand = [];
+let scrabbleBoardState = [];
+let scrabbleTotalScore = 0;
+
+function initScrabble(container) {
+    scrabbleTargetWord = argentineWords[Math.floor(Math.random() * argentineWords.length)];
+    scrabbleHand = scrabbleTargetWord.split('').map((char, id) => ({ id, char, used: false }));
+    // Shuffle hand
+    scrabbleHand.sort(() => Math.random() - 0.5);
+    scrabbleBoardState = [];
+
+    renderScrabble(container);
+}
+
+function renderScrabble(container) {
+    let boardHTML = '<div style="margin-bottom:20px; min-height:60px;">';
+    for (let i = 0; i < scrabbleTargetWord.length; i++) {
+        const char = scrabbleBoardState[i];
+        if (char) {
+            boardHTML += `<div class="scrabble-tile">${char}<span class="tile-score">${scrabbleScores[char]}</span></div>`;
+        } else {
+            boardHTML += `<div class="scrabble-board-slot"></div>`;
+        }
+    }
+    boardHTML += '</div>';
+
+    let handHTML = '<div style="margin-bottom:20px; border-top: 2px dashed #eee; padding-top:20px;">';
+    scrabbleHand.forEach((tile, idx) => {
+        if (!tile.used) {
+            handHTML += `<div class="scrabble-tile" onclick="playScrabbleTile(${idx})">${tile.char}<span class="tile-score">${scrabbleScores[tile.char]}</span></div>`;
+        } else {
+            handHTML += `<div class="scrabble-tile used">${tile.char}<span class="tile-score">${scrabbleScores[tile.char]}</span></div>`;
+        }
+    });
+    handHTML += '</div>';
+
+    container.innerHTML = `
+        <div style="text-align:center;">
+             <div style="display:flex; justify-content:space-between; width:100%; margin-bottom:10px;">
+                <span style="font-weight:bold; font-size:20px; color:#27ae60;">Puntos: ${scrabbleTotalScore}</span>
+                <button onclick="clearScrabbleBoard()" style="background:#f39c12; color:white; border:none; padding:5px 10px; border-radius:5px;">Borrar</button>
+            </div>
+            <h3 style="color:#333; margin-bottom:20px;">Ordena las letras para formar una palabra típica:</h3>
+            ${boardHTML}
+            ${handHTML}
+            <div id="scrabble-feedback" style="height:30px; color:green; font-weight:bold; font-size:20px;"></div>
+        </div>
+    `;
+}
+
+function playScrabbleTile(idx) {
+    if (scrabbleHand[idx].used) return;
+    if (scrabbleBoardState.length >= scrabbleTargetWord.length) return;
+
+    scrabbleHand[idx].used = true;
+    scrabbleBoardState.push(scrabbleHand[idx].char);
+
+    const container = document.getElementById('game-container-content');
+    renderScrabble(container);
+    checkScrabbleWin();
+}
+
+function clearScrabbleBoard() {
+    scrabbleHand.forEach(t => t.used = false);
+    scrabbleBoardState = [];
+    const container = document.getElementById('game-container-content');
+    renderScrabble(container);
+}
+
+function checkScrabbleWin() {
+    if (scrabbleBoardState.length === scrabbleTargetWord.length) {
+        const formedWord = scrabbleBoardState.join('');
+        if (formedWord === scrabbleTargetWord || argentineWords.includes(formedWord)) {
+            // Calculate score
+            let points = 0;
+            scrabbleBoardState.forEach(char => points += scrabbleScores[char]);
+            scrabbleTotalScore += points;
+
+            document.getElementById('scrabble-feedback').textContent = `¡Correcto! Sumaste ${points} puntos.`;
+            setTimeout(() => {
+                const container = document.getElementById('game-container-content');
+                initScrabble(container);
+            }, 2000);
+        } else {
+            document.getElementById('scrabble-feedback').textContent = "Casi... ¡Intenta de nuevo!";
+            document.getElementById('scrabble-feedback').style.color = "red";
+        }
+    }
+}
