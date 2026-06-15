@@ -736,3 +736,44 @@ body {
     border-right: 12px solid transparent;
     border-bottom: 24px solid;
 }
+
+/* --- PRONTO PROMPT STYLES --- */
+.pronto-numpad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    width: 100%;
+}
+
+.pronto-key {
+    background-color: #ffffff;
+    border: 2px solid #00bcd4;
+    border-radius: 15px;
+    font-size: 32px;
+    font-weight: bold;
+    color: #333;
+    height: 70px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transition: all 0.2s;
+}
+
+.pronto-key:active {
+    background-color: #e1f5fe;
+    transform: scale(0.95);
+}
+
+.pronto-key.clear-key {
+    background-color: #ffebee;
+    border-color: #f44336;
+    color: #f44336;
+}
+
+.pronto-key.ok-key {
+    background-color: #e8f5e9;
+    border-color: #4caf50;
+    color: #4caf50;
+}

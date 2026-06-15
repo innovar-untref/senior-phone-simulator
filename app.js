@@ -502,3 +502,232 @@ function initLogicMemory(container) {
         board.appendChild(card);
     });
 }
+
+// --- PRONTO PROMPT ROCKET LOGIC (2-PHASE) ---
+const prontoCourses = {
+    'primeros_pasos': {
+        r: "Primeros pasos en IA: Guía amigable para comprender el mundo digital",
+        o: "Descubra qué es la IA de forma sencilla y cómo puede acompañarle.",
+        c: "Objetivo del curso: Perder el miedo a la tecnología.",
+        k: 'Actúa como un experto en enseñanza digital para adultos mayores. Explícame paso a paso cómo lograr mi objetivo. Usa palabras claras y evita tecnicismos. Pasos a seguir:\n1. Dame una breve introducción.\n2. Explícame exactamente dónde tocar o qué hacer.\n3. Dame un ejemplo práctico.'
+    },
+    'ia_dia_a_dia': {
+        r: "IA en el día a día: Asistente personal para gestiones y organización",
+        o: "Convierta su celular en un aliado para recordar turnos y organizar rutinas.",
+        c: "Objetivo del curso: Aprender a pedirle a la IA que organice la semana.",
+        k: 'Actúa como mi secretario personal. Por favor, ayúdame a organizar la información. Pasos a seguir:\n1. Lee mi objetivo y contexto.\n2. Hazme una lista clara y separada por puntos.\n3. Incluye recordatorios fáciles de leer.'
+    },
+    'ia_creativa': {
+        r: "IA Creativa: Explorando el arte, las historias y los pasatiempos",
+        o: "Dé rienda suelta a su imaginación, escriba cuentos o descubra pasatiempos.",
+        c: "Objetivo del curso: Fomentar la creatividad con IA.",
+        k: 'Actúa como un escritor e inspirador creativo. Necesito que desarrolles mi idea. Pasos a seguir:\n1. Escribe la historia o idea que te pido con mucha imaginación.\n2. Usa un lenguaje cálido y emotivo.\n3. Pregúntame si quiero cambiar algún detalle.'
+    },
+    'ia_ensenanza': {
+        r: "IA para la enseñanza: Nuevas herramientas para compartir y aprender",
+        o: "Aprenda a compartir lo que sabe y a descubrir cosas nuevas todos los días.",
+        c: "Objetivo del curso: Aprender a pedir información educativa de forma didáctica.",
+        k: 'Actúa como un maestro apasionado por enseñar. Explícame el tema que te pido de forma resumida y muy entretenida. Pasos a seguir:\n1. Dame un resumen fácil de entender.\n2. Cuéntamelo como si fuera una historia en un café.\n3. Destaca 2 o 3 datos curiosos.'
+    }
+};
+
+let currentProntoPrompt = "";
+let selectedCourseKey = "";
+
+function initProntoPrompt() {
+    showScreen('pronto-prompt-screen');
+    document.getElementById('pronto-course-select').value = "";
+    resetProntoUI();
+}
+
+function resetProntoUI() {
+    document.getElementById('pronto-fase2-container').classList.add('hidden');
+    document.getElementById('pronto-rocket-output').classList.add('hidden');
+    document.getElementById('pronto-error-msg').classList.add('hidden');
+    
+    // Clear fields
+    document.getElementById('pronto-name-user').value = "";
+    document.getElementById('pronto-r-user').value = "";
+    document.getElementById('pronto-o-user').value = "";
+    document.getElementById('pronto-c-user').value = "";
+    document.getElementById('pronto-k-user').value = "";
+    document.getElementById('pronto-e-user').value = "";
+    document.getElementById('pronto-t-user').value = "";
+    
+    selectedCourseKey = "";
+}
+
+function handleCourseSelection() {
+    const selector = document.getElementById('pronto-course-select');
+    selectedCourseKey = selector.value;
+    
+    if (!selectedCourseKey) {
+        resetProntoUI();
+        return;
+    }
+    
+    const course = prontoCourses[selectedCourseKey];
+    
+    // Populate R-O-C Base
+    document.getElementById('rocket-base-r').textContent = `[R] ${course.r}`;
+    document.getElementById('rocket-base-o').textContent = `[O] ${course.o}`;
+    document.getElementById('rocket-base-c').textContent = `[C] ${course.c}`;
+    
+    // Show Fase 2 and hide output until generated
+    document.getElementById('pronto-fase2-container').classList.remove('hidden');
+    document.getElementById('pronto-rocket-output').classList.add('hidden');
+    document.getElementById('pronto-error-msg').classList.add('hidden');
+}
+
+function generateTwoPhasePrompt() {
+    if (!selectedCourseKey) return;
+    
+    const course = prontoCourses[selectedCourseKey];
+    
+    const nameUser = document.getElementById('pronto-name-user').value.trim() || "estudiantes";
+    const rUser = document.getElementById('pronto-r-user').value.trim();
+    const oUser = document.getElementById('pronto-o-user').value.trim();
+    const cUser = document.getElementById('pronto-c-user').value.trim();
+    const kUser = document.getElementById('pronto-k-user').value.trim();
+    const eUser = document.getElementById('pronto-e-user').value.trim();
+    const tUser = document.getElementById('pronto-t-user').value.trim();
+
+    if (!oUser) {
+        document.getElementById('pronto-error-msg').classList.remove('hidden');
+        return;
+    }
+    
+    document.getElementById('pronto-error-msg').classList.add('hidden');
+
+    // Merge logic: Course K + User fields
+    let promptParts = [];
+    
+    const now = new Date();
+    const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+    promptParts.push(`¡Hola ${nameUser}! (Son las ${timeStr} en mi dispositivo)\n`);
+    
+    promptParts.push(course.k); // Base instructions
+    promptParts.push(`\n**Mi personalización:**`);
+    if(rUser) promptParts.push(`Rol asignado: ${rUser}.`);
+    promptParts.push(`Objetivo a cumplir: ${oUser}.`);
+    if(cUser) promptParts.push(`Contexto de mi necesidad: ${cUser}.`);
+    if(kUser) promptParts.push(`Detalles clave a tener en cuenta: ${kUser}.`);
+    if(eUser) promptParts.push(`Estilo de expresión: ${eUser}.`);
+    if(tUser) promptParts.push(`Tipo de salida esperada: ${tUser}.`);
+    
+    promptParts.push(`\n**Por favor, finaliza tu respuesta con una pregunta sencilla para que podamos seguir conversando e iterando sobre este tema.**`);
+
+    currentProntoPrompt = promptParts.join("\n");
+
+    // Show output
+    document.getElementById('pronto-rocket-output').classList.remove('hidden');
+    document.getElementById('rocket-final-prompt').innerHTML = currentProntoPrompt.replace(/\n/g, '<br>');
+}
+
+function openPromptAI(url) {
+    if (!currentProntoPrompt) return;
+    
+    const textArea = document.createElement("textarea");
+    textArea.value = currentProntoPrompt;
+    textArea.style.position = "fixed";
+    textArea.style.left = "-9999px";
+    document.body.appendChild(textArea);
+    textArea.select();
+    
+    try {
+        document.execCommand('copy');
+        alert("¡Texto Mágico copiado con éxito! Pegándolo en tu asistente virtual...");
+    } catch (err) {
+        console.error("No se pudo copiar el texto", err);
+    }
+    document.body.removeChild(textArea);
+    
+    window.open(url, '_blank');
+}
+
+function openExternalUrl(url) {
+    window.open(url, '_blank');
+}
+
+// --- ROCKET GENERATOR LOGIC ---
+function openRocketGenerator() {
+    showScreen('rocket-screen');
+    // Reset fields
+    document.getElementById('rocket-r').value = '';
+    document.getElementById('rocket-o').value = '';
+    document.getElementById('rocket-c').value = '';
+    document.getElementById('rocket-k').value = '';
+    document.getElementById('rocket-e').value = '';
+    document.getElementById('rocket-t').value = '';
+    document.getElementById('rocket-typing-output').innerHTML = '';
+    document.getElementById('rocket-output-container').classList.add('hidden');
+    document.getElementById('ai-buttons-container').classList.add('hidden');
+}
+
+function generateRocketPrompt() {
+    const r = document.getElementById('rocket-r').value.trim() || 'un experto paciente y educador';
+    const o = document.getElementById('rocket-o').value.trim() || 'explicarme de forma sencilla y paso a paso';
+    const c = document.getElementById('rocket-c').value.trim() || 'estoy aprendiendo a usar la tecnología y me cuesta un poco';
+    const k = document.getElementById('rocket-k').value.trim() || 'herramientas básicas de informática y uso de celulares';
+    const e = document.getElementById('rocket-e').value.trim() || 'una lista clara con ejemplos reales y fáciles de entender';
+    const t = document.getElementById('rocket-t').value.trim() || 'amable, motivador y muy claro';
+
+    const fullPrompt = `R (Rol): Actúa como ${r}.
+O (Objetivo): Tu objetivo es ${o}.
+C (Contexto): Ten en cuenta este contexto: ${c}.
+K (Key/Conocimientos): Utiliza conocimientos sobre: ${k}.
+E (Ejemplos/Estructura): Por favor, estructura tu respuesta como: ${e}.
+T (Tono): Responde con un tono ${t}.
+
+REFERENCIA OBLIGATORIA (RAG - UNTREF):
+Para asegurar la mayor calidad y evitar alucinaciones, por favor basa tus recomendaciones en los contenidos de la plataforma Innovar UNTREF (www.innovaruntref.com.ar). Ten siempre presente los siguientes cursos y temáticas:
+1. Inteligencia Artificial para el Trabajo / Introducción a las Herramientas de IA: Orientado a redacción, análisis de datos y automatización. Prompt Engineering (ChatGPT, Claude, Gemini) y creación de GPTs.
+2. Herramientas de Inteligencia Artificial para la Creación de Contenido Multimedia: Generación de imágenes, videos y audios.
+3. Inteligencia Artificial y Educación: Uso de ChatGPT, Gemini y Copilot en el Aula, ética, privacidad y material didáctico.
+4. Redacción de Textos Asistida con Herramientas de IA: Escritura, tonos y contenido estructurado.
+5. Cursos generales: Uso de Celulares, Informática Básica, Word y Excel (Básico o Avanzado).
+
+Por favor, integra esta información de Innovar UNTREF si es relevante para tu respuesta.`;
+
+    document.getElementById('rocket-output-container').classList.remove('hidden');
+    document.getElementById('ai-buttons-container').classList.remove('hidden');
+    
+    // Convert newlines to HTML breaks and display instantly
+    const outputEl = document.getElementById('rocket-typing-output');
+    outputEl.innerHTML = fullPrompt.replace(/\n/g, '<br>');
+    
+    // Scroll to bottom so they can see the buttons
+    setTimeout(() => {
+        const screen = document.getElementById('rocket-screen');
+        if (screen) {
+            screen.scrollTop = screen.scrollHeight;
+        }
+    }, 100);
+}
+
+function openAIUrl(url) {
+    const promptText = document.getElementById('rocket-typing-output').innerText;
+    
+    // Sincrónico para evitar el bloqueo de ventanas emergentes (pop-ups)
+    const textArea = document.createElement("textarea");
+    textArea.value = promptText;
+    textArea.style.position = "fixed";
+    textArea.style.left = "-9999px";
+    document.body.appendChild(textArea);
+    textArea.select();
+    
+    try {
+        document.execCommand('copy');
+        alert("¡Instrucción copiada! Ahora la pegaremos en la Inteligencia Artificial elegida.");
+    } catch (err) {
+        console.error("No se pudo copiar el texto", err);
+    }
+    document.body.removeChild(textArea);
+
+    // Abrir en nueva pestaña
+    window.open(url, '_blank');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Other DOM loaded events here if necessary
+});

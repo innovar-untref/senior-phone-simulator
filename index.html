@@ -29,7 +29,7 @@
 
             <!-- HOME SCREEN -->
             <section id="home-screen" class="screen active">
-                <h1 class="screen-title" style="text-align: center; margin-top: 20px;">Hola, Agustín</h1>
+                <h1 class="screen-title" style="text-align: center; margin-top: 20px;">Hola, Estudiante</h1>
                 <div class="app-grid">
                     <button class="app-icon" onclick="showScreen('phone-screen')" style="color: #007aff;">
                         <span class="icon">📞</span>
@@ -59,6 +59,10 @@
                     <button class="app-icon" onclick="showScreen('sos-screen')" style="color: #ff3b30;">
                         <span class="icon">🆘</span>
                         <span class="label">Auxilio</span>
+                    </button>
+                    <button class="app-icon" onclick="initProntoPrompt()" style="color: #00bcd4;">
+                        <span class="icon">💡</span>
+                        <span class="label">Pronto Prompt</span>
                     </button>
                     <button class="app-icon" onclick="showScreen('games-hub-screen')"
                         style="color: #9b59b6; grid-column: span 2; width: 100%;">
@@ -268,6 +272,171 @@
                     </ul>
                 </div>
                 <button class="back-btn-float" onclick="goHome()">Cancelar</button>
+            </section>
+
+            <!-- PRONTO PROMPT SCREEN -->
+            <section id="pronto-prompt-screen" class="screen hidden" style="background-color: #f0f4f8; flex-direction: column;">
+                <div style="background: #00bcd4; color: white; padding: 15px; display: flex; align-items: center; justify-content: space-between; border-radius: 0 0 20px 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+                    <div style="display:flex; align-items:center;">
+                        <div class="chat-avatar" style="background: white; color: #00bcd4; width: 40px; height: 40px; font-size: 20px; margin-right: 10px;">💡</div>
+                        <h3 style="font-size: 18px; margin: 0;">Pronto Prompt UPAMI</h3>
+                    </div>
+                </div>
+                
+                <div style="flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column;">
+                    
+                    <!-- FASE 1: SELECTOR DE CURSOS -->
+                    <div style="background: white; border-radius: 15px; padding: 20px; text-align: left; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+                        <h3 style="color: #008ba3; margin-bottom: 5px; font-size: 20px;">1. Selecciona un Curso</h3>
+                        <select id="pronto-course-select" onchange="handleCourseSelection()" style="width: 100%; padding: 15px; border-radius: 10px; border: 2px solid #00bcd4; font-size: 16px; font-weight: bold; color: #333; background-color: #e1f5fe; cursor: pointer;">
+                            <option value="">Seleccione una opción...</option>
+                            <option value="primeros_pasos">🎓 Primeros pasos en IA</option>
+                            <option value="ia_dia_a_dia">📅 IA en el día a día</option>
+                            <option value="ia_creativa">🎨 IA Creativa</option>
+                            <option value="ia_ensenanza">🏫 IA para la enseñanza</option>
+                        </select>
+                    </div>
+
+                    <!-- FASE 2: METODO ROCKET (Base Info + Campos) -->
+                    <div id="pronto-fase2-container" class="hidden" style="background: white; border-radius: 15px; padding: 20px; text-align: left; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+                        
+                        <!-- R-O-C Base -->
+                        <div style="background: #e1f5fe; padding: 15px; border-radius: 10px; margin-bottom: 20px; border-left: 5px solid #00bcd4;">
+                            <h3 id="rocket-base-r" style="color: #008ba3; margin-bottom: 5px; font-size: 18px;">[R]</h3>
+                            <p id="rocket-base-o" style="font-size: 15px; color: #444; font-style: italic; margin-bottom: 5px;">[O]</p>
+                            <p id="rocket-base-c" style="font-size: 15px; color: #333; font-weight: bold; margin: 0;">[C]</p>
+                        </div>
+
+                        <h3 style="color: #008ba3; margin-bottom: 5px; font-size: 20px;">2. Personaliza tu Consulta</h3>
+                        <p style="font-size: 15px; color: #666; margin-bottom: 15px;">Completa estos campos para que la IA se adapte a ti:</p>
+
+                        <!-- Nombre del Usuario -->
+                        <div style="margin-bottom: 15px;">
+                            <label style="font-size: 16px; font-weight: bold; color: #333;">Tu Nombre (Para que la IA te salude)</label>
+                            <input type="text" id="pronto-name-user" placeholder="Ej: Marta o Juan" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ccc; margin-top: 5px; font-size: 16px;">
+                        </div>
+
+                        <!-- Campos Permanentes ROCKET -->
+                        <div style="margin-bottom: 15px;">
+                            <label style="font-size: 16px; font-weight: bold; color: #333;">R - Rol (Define la identidad)</label>
+                            <input type="text" id="pronto-r-user" placeholder="Ej: Un profesor muy paciente de computación" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ccc; margin-top: 5px; font-size: 16px;">
+                        </div>
+                        <div style="margin-bottom: 15px;">
+                            <label style="font-size: 16px; font-weight: bold; color: #333;">O - Objetivo (Tarea concreta) <span style="color:red;">*</span></label>
+                            <input type="text" id="pronto-o-user" placeholder="Ej: Explicarme cómo hacer una videollamada" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ccc; margin-top: 5px; font-size: 16px;">
+                        </div>
+                        <div style="margin-bottom: 15px;">
+                            <label style="font-size: 16px; font-weight: bold; color: #333;">C - Contexto (Tus antecedentes)</label>
+                            <input type="text" id="pronto-c-user" placeholder="Ej: Soy abuelo y quiero hablar con mi nieta que vive lejos" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ccc; margin-top: 5px; font-size: 16px;">
+                        </div>
+                        <div style="margin-bottom: 15px;">
+                            <label style="font-size: 16px; font-weight: bold; color: #333;">K - Detalles Clave (Reglas o límites)</label>
+                            <input type="text" id="pronto-k-user" placeholder="Ej: Explicarlo paso a paso sin usar palabras raras" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ccc; margin-top: 5px; font-size: 16px;">
+                        </div>
+                        <div style="margin-bottom: 15px;">
+                            <label style="font-size: 16px; font-weight: bold; color: #333;">E - Estilo de Expresión (El tono)</label>
+                            <input type="text" id="pronto-e-user" placeholder="Ej: Tono cálido, amigable y que me dé confianza" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ccc; margin-top: 5px; font-size: 16px;">
+                        </div>
+                        <div style="margin-bottom: 20px;">
+                            <label style="font-size: 16px; font-weight: bold; color: #333;">T - Tipo de Salida (Formato final)</label>
+                            <input type="text" id="pronto-t-user" placeholder="Ej: Una lista corta enumerada del 1 al 5" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ccc; margin-top: 5px; font-size: 16px;">
+                        </div>
+                        
+                        <div id="pronto-error-msg" class="hidden" style="color: #d32f2f; background: #ffebee; padding: 10px; border-radius: 8px; margin-bottom: 10px; font-weight: bold; font-size: 15px;">Por favor, completa el "Objetivo".</div>
+                        <button onclick="generateTwoPhasePrompt()" style="width: 100%; padding: 15px; background: #00bcd4; color: white; border: none; border-radius: 12px; font-weight: bold; font-size: 18px; box-shadow: 0 4px 10px rgba(0,188,212,0.3);">✨ Generar Texto Mágico</button>
+                    </div>
+
+                    <!-- ROCKET OUTPUT -->
+                    <div id="pronto-rocket-output" class="hidden" style="background: white; border-radius: 15px; padding: 20px; text-align: left; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+                        <h3 style="color: #333; margin-bottom: 15px; font-size: 20px;">3. Tu Prompt Generado:</h3>
+                        <div style="background: #f8f9fa; border: 2px solid #2ecc71; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+                            <p id="rocket-final-prompt" style="font-size: 16px; color: #333; font-weight: bold; margin-bottom: 0; line-height: 1.5;"></p>
+                        </div>
+                        
+                        <div style="text-align: center; margin-bottom: 10px;">
+                            <h4 style="color: #444; font-size: 18px; margin-bottom: 15px;">4. Selecciona una IA para conversar:</h4>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                                <button onclick="openPromptAI('https://chatgpt.com/')" style="background: #10a37f; color: white; border: none; padding: 15px; border-radius: 10px; font-weight: bold; font-size: 16px; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">ChatGPT</button>
+                                <button onclick="openPromptAI('https://gemini.google.com/')" style="background: #4285f4; color: white; border: none; padding: 15px; border-radius: 10px; font-weight: bold; font-size: 16px; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">Gemini</button>
+                                <button onclick="openPromptAI('https://www.perplexity.ai/')" style="background: #0ea5e9; color: white; border: none; padding: 15px; border-radius: 10px; font-weight: bold; font-size: 16px; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">Perplexity</button>
+                                <button onclick="openPromptAI('https://claude.ai/')" style="background: #d97757; color: white; border: none; padding: 15px; border-radius: 10px; font-weight: bold; font-size: 16px; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">Claude</button>
+                            </div>
+                            <p style="font-size: 14px; color: #666; margin-top: 15px;">El texto se copiará automáticamente al hacer clic.</p>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div style="padding: 15px; display: flex; gap: 10px; background: white; border-top: 1px solid #eee; flex-direction: column;">
+                    <button onclick="openExternalUrl('https://www.innovaruntref.com.ar/cursos')" style="width: 100%; padding: 12px; background: #004aad; color: white; border: none; border-radius: 12px; font-weight: bold; font-size: 16px; display: flex; align-items: center; justify-content: center; gap: 5px;">
+                        🎓 Inscripción UNTREF
+                    </button>
+                </div>
+
+                <button class="back-btn-float" onclick="goHome()">Inicio</button>
+            </section>
+
+            <!-- ROCKET GENERATOR SCREEN -->
+            <section id="rocket-screen" class="screen hidden" style="background-color: #f0f4f8; flex-direction: column;">
+                <div style="background: #e67e22; color: white; padding: 15px; display: flex; align-items: center; justify-content: space-between; border-radius: 0 0 20px 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+                    <div style="display:flex; align-items:center;">
+                        <span style="font-weight: bold; font-size: 18px;">🚀 Generador de Prompt ROCKET</span>
+                    </div>
+                </div>
+                
+                <div style="flex: 1; padding: 15px; overflow-y: auto;">
+                    <div id="rocket-form-container" class="glass-card" style="background: white;">
+                        <h3 style="color: #e67e22; margin-bottom: 10px;">Arma tu Prompt Perfecto</h3>
+                        <p style="font-size: 16px; color: #666; margin-bottom: 15px;">Completa los campos para generar una instrucción experta.</p>
+                        
+                        <div style="margin-bottom: 10px;">
+                            <label style="font-size: 14px; font-weight: bold; color: #333;">R - Rol (¿Quién es la IA?)</label>
+                            <input type="text" id="rocket-r" placeholder="Ej: Un experto en tecnología" style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid #ccc; margin-top: 5px; font-size: 16px;">
+                        </div>
+                        <div style="margin-bottom: 10px;">
+                            <label style="font-size: 14px; font-weight: bold; color: #333;">O - Objetivo (¿Qué quieres?)</label>
+                            <input type="text" id="rocket-o" placeholder="Ej: Ayúdame a usar Excel" style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid #ccc; margin-top: 5px; font-size: 16px;">
+                        </div>
+                        <div style="margin-bottom: 10px;">
+                            <label style="font-size: 14px; font-weight: bold; color: #333;">C - Contexto (Info adicional)</label>
+                            <input type="text" id="rocket-c" placeholder="Ej: Soy un adulto mayor aprendiendo" style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid #ccc; margin-top: 5px; font-size: 16px;">
+                        </div>
+                        <div style="margin-bottom: 10px;">
+                            <label style="font-size: 14px; font-weight: bold; color: #333;">K - Key (Conocimientos clave)</label>
+                            <input type="text" id="rocket-k" placeholder="Ej: Menciona herramientas de Office" style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid #ccc; margin-top: 5px; font-size: 16px;">
+                        </div>
+                        <div style="margin-bottom: 10px;">
+                            <label style="font-size: 14px; font-weight: bold; color: #333;">E - Ejemplos / Estructura</label>
+                            <input type="text" id="rocket-e" placeholder="Ej: Haz una lista paso a paso" style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid #ccc; margin-top: 5px; font-size: 16px;">
+                        </div>
+                        <div style="margin-bottom: 10px;">
+                            <label style="font-size: 14px; font-weight: bold; color: #333;">T - Tono</label>
+                            <input type="text" id="rocket-t" placeholder="Ej: Paciente, claro y motivador" style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid #ccc; margin-top: 5px; font-size: 16px;">
+                        </div>
+                        
+                        <button onclick="generateRocketPrompt()" style="width: 100%; padding: 12px; background: #e67e22; color: white; border: none; border-radius: 12px; font-weight: bold; margin-top: 10px; font-size: 18px; box-shadow: 0 4px 10px rgba(230,126,34,0.3);">✨ Escribir Prompt</button>
+                    </div>
+
+                    <div id="rocket-output-container" class="hidden" style="margin-top: 20px;">
+                        <h3 style="color: #333; margin-bottom: 10px;">Tu Prompt Generado:</h3>
+                        <div style="background: #282c34; color: #61dafb; padding: 15px; border-radius: 12px; font-family: monospace; min-height: 100px; font-size: 16px; box-shadow: inset 0 0 10px rgba(0,0,0,0.5);" id="rocket-typing-output"></div>
+                        
+                        <!-- AI Buttons -->
+                        <div id="ai-buttons-container" class="hidden" style="margin-top: 20px; text-align: center;">
+                            <h4 style="margin-bottom: 15px; color: #444; font-size: 18px;">¡Pruébalo en estas Inteligencias Artificiales!</h4>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 80px;">
+                                <button onclick="openAIUrl('https://chatgpt.com/g/g-68b1ee82a1b481918c46ce0a2b0123aa-edu-gpt')" style="background: #10a37f; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; font-size: 16px;">EduGPT</button>
+                                <button onclick="openAIUrl('https://gemini.google.com/')" style="background: #4285f4; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; font-size: 16px;">Gemini</button>
+                                <button onclick="openAIUrl('https://chatgpt.com/')" style="background: #333; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; font-size: 16px;">ChatGPT</button>
+                                <button onclick="openAIUrl('https://www.perplexity.ai/')" style="background: #0ea5e9; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; font-size: 16px;">Perplexity</button>
+                                <button onclick="openAIUrl('https://chat.deepseek.com/')" style="background: #4f46e5; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; font-size: 16px;">DeepSeek</button>
+                                <button onclick="openAIUrl('https://huggingface.co/chat/')" style="background: #f59e0b; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; font-size: 16px;">Hugging Face</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="back-btn-float" onclick="goHome()">Inicio</button>
             </section>
 
             <!-- CONTACTS SCREEN (Updated) -->
